@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'phase1',
+    'rest_framework',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -49,6 +51,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 
 ROOT_URLCONF = 'people_connect_plus.urls'
 
@@ -81,6 +89,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL         = "phase1.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
