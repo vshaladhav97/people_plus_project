@@ -64,8 +64,8 @@ class LoginAPIView(generics.GenericAPIView):
                test_token       = serializer.data["tokens"]
                username         = serializer.data['username']
                test_refresh     = ast.literal_eval(test_token)
-               user_data        = User.objects.filter(Q(username=request.data['username'])|Q(email=request.data ['username'])).values('email','is_verified', 'last_login')
-               return Response({"username":username,'email_id':user_data[0]['email'],'is_verified':user_data[0]['is_verified'],"tokens": test_refresh, 'first_time':first_time_login}, status=status.HTTP_200_OK)
+               user_data        = User.objects.filter(Q(username=request.data['username'])|Q(email=request.data ['username'])).values('email',)
+               return Response({"username":username,'email_id':user_data[0]['email'],"tokens": test_refresh}, status=status.HTTP_200_OK)
        else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 

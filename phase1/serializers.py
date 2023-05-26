@@ -99,6 +99,7 @@ class LoginSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         username = attrs.get('username', '')
         password = attrs.get('password', '')
+
         if username and password:
             try:
                 user = User.objects.get(Q(username=username)|Q(email=username))
