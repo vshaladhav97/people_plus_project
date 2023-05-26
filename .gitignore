@@ -1,0 +1,10 @@
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+**/__pycache__/
+*.py[cod]
+**.pyc
+**/__pycache__
+*/*/__pycache__/
+*/__pycache__/
+.idea

@@ -23,23 +23,6 @@ class RegisterApi(generics.GenericAPIView):
             "message": "User Created Successfully.  Now perform Login to get your token",
         })
 
-
-class UserProfileAPIView(generics.GenericAPIView):
-    def get(self, request):
-        json_data                   = request.data
-        user_id                     = json_data['user_id']
-        user_data                   = User.objects.get(id = user_id)
-        user_dict                   = {}
-        user_dict["id"]             = user_data.id
-        user_dict["username"]       = user_data.username
-        user_dict["email"]          = user_data.email
-        user_dict["first_name"]     = user_data.first_name if user_data.first_name else ""
-        user_dict["last_name"]      = user_data.last_name if user_data.last_name else ""
-        user_dict["dob"]            = user_data.dob
-        user_dict["gender"]         = user_data.gender
-        user_dict["profile_image"]  = user_data.profile_image.url if user_data.profile_image else ""
-        return Response({'result' : user_dict}, status=status.HTTP_200_OK)
-
 # Login API View
 class LoginAPIView(generics.GenericAPIView):
    serializer_class = LoginSerializer
@@ -69,6 +52,62 @@ class LoginAPIView(generics.GenericAPIView):
        else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
+# Fetch User Profile API View
+class UserProfileAPIView(generics.GenericAPIView):
+    def get(self, request):
+        json_data                   = request.data
+        user_id                     = request.user.id
+        user_data                   = User.objects.get(id = user_id)
+        user_dict                   = {}
+        user_dict["id"]             = user_data.id
+        user_dict["username"]       = user_data.username
+        user_dict["email"]          = user_data.email
+        user_dict["first_name"]     = user_data.first_name if user_data.first_name else ""
+        user_dict["last_name"]      = user_data.last_name if user_data.last_name else ""
+        user_dict["dob"]            = user_data.dob if user_data.dob else ""
+        user_dict["gender"]         = user_data.gender if user_data.gender else ""
+        user_dict["profile_image"]  = user_data.profile_image.url if user_data.profile_image else ""
+        return Response({'result' : user_dict}, status=status.HTTP_200_OK)
+
+        # # 1. List all
+        #
+        #
+        # user_fetch = User.objects.filter(id=request.user.id)
+        # serializer = UserFetchSerializer(user_fetch, many=True)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserListAPIView(generics.GenericAPIView):
+    def get(self, request):
+        user_data = User.objects.all()
+        users_list = []
+        if user_data:
+            for users in user_data:
+                user_dict = {}
+                user_dict['user_id']        = users.id
+                user_dict['username']       = users.username
+                user_dict['profile_image']  = users.profile_image.url if users.profile_image else ""
+                users_list.append(user_dict)
+            return Response({'result': users_list}, status=status.HTTP_200_OK)
+        else:
+            return Response({'result': users_list}, status=status.HTTP_204_NO_CONTENT)
+
+class UserFollowedAndFollowersListAPIView(generics.GenericAPIView):
+    def get(self, request, pk):
+        user_id     = pk
+        try:
+            user_data   = UserFollowerAndFollowed.objects.get(user_id = user_id)
+            if user_data:
+                followers_dict                  = {}
+                followers_dict['user_id']       = user_id
+                followers_dict['followers']     = user_data.followers.all().count() if user_data.followers.all() else 0
+                followers_dict['followed']      = user_data.followed.all().count() if user_data.followed.all() else 0
+                return Response({'result': followers_dict}, status=status.HTTP_200_OK)
+        except Exception as e:
+            followers_dict                  = {}
+            followers_dict['user_id']       = user_id
+            followers_dict['followers']     = 0
+            followers_dict['followed']      = 0
+            return Response({'result': followers_dict}, status=status.HTTP_200_OK)
 
 
 
