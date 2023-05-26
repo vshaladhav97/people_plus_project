@@ -118,3 +118,10 @@ class LoginSerializer(serializers.ModelSerializer):
                 return {'msg':'Invalid credentials, try again','is_verified': False}
         else:
             return {'msg': 'Invalid credentials, try again','is_verified': False}
+
+
+class UserFetchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "first_name", "last_name", "dob", "gender", "profile_image", "created_date", "modified_date",]
+

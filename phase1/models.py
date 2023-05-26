@@ -85,3 +85,19 @@ class UserGallary(models.Model):
     photos          = models.ImageField(upload_to='user_gallary/images/')
     created_date    = models.DateTimeField(auto_now_add=True)
     modified_date   = models.DateTimeField(auto_now=True)
+    created_date    = models.DateTimeField(auto_now_add=True)
+    modified_date   = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.user.id)
+
+class UserFollowerAndFollowed(models.Model):
+
+    user_id         = models.ForeignKey(User, on_delete=models.CASCADE)
+    followers       = models.ManyToManyField(User, related_name="followers_users")
+    followed        = models.ManyToManyField(User,  related_name="followed_users")
+    created_date    = models.DateTimeField(auto_now_add=True)
+    modified_date   = models.DateTimeField(auto_now=True)
+
+    # def __str__(self):
+    #     return str(self.user.id)
