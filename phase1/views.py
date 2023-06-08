@@ -76,6 +76,7 @@ class UserProfileAPIView(generics.GenericAPIView):
         # serializer = UserFetchSerializer(user_fetch, many=True)
         # return Response(serializer.data, status=status.HTTP_200_OK)
 
+# User List API View
 class UserListAPIView(generics.GenericAPIView):
     def get(self, request):
         user_data = User.objects.all()
@@ -91,6 +92,7 @@ class UserListAPIView(generics.GenericAPIView):
         else:
             return Response({'result': users_list}, status=status.HTTP_204_NO_CONTENT)
 
+# User Followed and Followers API View
 class UserFollowedAndFollowersListAPIView(generics.GenericAPIView):
     def get(self, request, pk):
         user_id     = pk
@@ -108,6 +110,48 @@ class UserFollowedAndFollowersListAPIView(generics.GenericAPIView):
             followers_dict['followers']     = 0
             followers_dict['followed']      = 0
             return Response({'result': followers_dict}, status=status.HTTP_200_OK)
+
+# User Followers Details List API View
+class UserFollowerDetailsListAPIView(generics.GenericAPIView):
+    def get(self, request, pk):
+        try:
+            user_id     = pk
+            user_data   = UserFollowerAndFollowed.objects.get(user_id=user_id)
+            followers_list = []
+            if user_data:
+                # followers_dict                  = {}
+                # followers_dict['followers']     = user_data.followers.all().count() if user_data.followers.all() else 0
+                for users in user_data.followed.all():
+                    followers_dict = {}
+                    followers_dict['user_id'] = users.id
+                    followers_dict['username'] = users.username
+                    followers_dict['profile_image'] = users.profile_image.url if users.profile_image else ""
+                    
+                    followers_list.append(followers_dict)
+                return Response({'result': followers_list}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'result': e.args}, status=status.HTTP_400_BAD_REQUEST)
+
+# User Followed Details List API View
+class UserFollowedDetailsListAPIView(generics.GenericAPIView):
+    def get(self, request, pk):
+        try:
+            user_id = pk
+            user_data = UserFollowerAndFollowed.objects.get(user_id=user_id)
+            followers_list = []
+            if user_data:
+                # followers_dict                  = {}
+                # followers_dict['followers']     = user_data.followers.all().count() if user_data.followers.all() else 0
+                for users in user_data.followers.all():
+                    followers_dict = {}
+                    followers_dict['user_id'] = users.id
+                    followers_dict['username'] = users.username
+                    followers_dict['profile_image'] = users.profile_image.url if users.profile_image else ""
+
+                    followers_list.append(followers_dict)
+                return Response({'result': followers_list}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'result': e.args}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
